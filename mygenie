@@ -1,0 +1,144 @@
+from bs4 import BeautifulSoup 
+import pyttsx3
+import speech_recognition as sr
+import datetime
+import pyaudio
+import wikipedia
+import webbrowser
+import os
+import pyjokes
+import pywhatkit
+import sys
+import requests
+
+
+
+engine=pyttsx3.init('sapi5')
+voices=engine.getProperty('voices')
+engine.setProperty('voice',voices[0].id)
+                   
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+def wishMe():
+    hour=int(datetime.datetime.now().hour)
+    if hour>=0 and hour<12:
+        speak("Good Morning IRON MAN!!")
+        print("Good Morning IRON MAN!!")
+
+    elif hour>=12 and hour<18:
+        speak("Good Afternoon IRON MAN!!")
+        print("Good Afternoon IRON MAN!!")
+
+    else:
+        speak("Good Evening IRON MAN!!")
+        print("Good Evening IRON MAN!!")
+
+    speak("I am you Jarvis. Pleas tell me how may I help you")
+    print("I am you Jarvis. Pleas tell me how may I help you")
+
+def takeCommand():
+    r=sr.Recognizer() 
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold=1
+        audio=r.listen(source)
+
+    try:
+        print("Recognizing...")
+        query= r.recognize_google(audio, language='en-in')
+        print(f"User said: {query}\n")
+
+    except Exception as e:
+        print(e)
+
+        print("Say that again please...")
+        return "None"
+    return query
+
+
+if __name__ == "__main__":
+    wishMe()
+    while True:
+    # if 1:
+        query = takeCommand().lower()
+
+        if 'wikipedia' in query:
+            speak('Searching Wikipedia...')
+            print('Searching Wikipedia...')
+            query = query.replace("wikipedia", "")
+            results = wikipedia.summary(query, sentences=2)
+            speak("According to Wikipedia")
+            print("According to Wikipedia")
+            print(results)
+            speak(results)
+
+        elif 'open youtube' in query:
+            webbrowser.open("youtube.com")
+
+        elif 'play' in query:
+            song=query.replace('play', '')
+            speak('playing '+ song)
+            pywhatkit.playonyt(song)
+            
+        elif 'open google' in query:
+            speak("sir, what should I search on google")
+            cn=takeCommand().lower()
+            webbrowser.open("google.com")
+
+        elif 'open stack overflow' in query:
+            webbrowser.open("stackoverflow.com")
+
+        elif 'open github' in query:
+            webbrowser.open("github.com")
+
+        elif 'open linkedin' in query:
+            webbrowser.open("linkedin.com")
+
+        elif 'resume songs ' in query:
+            music_dir='D:\\voice_assist_music\\songs\\fav_songs'
+            songs=os.listdir(music_dir)
+            print(songs)
+            os.startfile(os.path.join(music_dir, songs[0]))
+
+        elif 'what is the time right now' in query:
+            strTime=datetime.datetime.now().strftime("%H:%M:%S")
+            speak(f"Sir, the time is {strTime}")
+            print(f"Sir, the time is {strTime}")
+
+
+        elif 'temperature' in query:
+            search = "temperature in dehradun"
+            url = f"https://www.google.com/search?q={search}"
+            r = requests.get(url)
+            data = BeautifulSoup(r.text,"html.parser") 
+            temp = data.find("div", class_= "BNeawe").text
+            speak(f"current {search} is {temp}")
+            print(f"current {search} is {temp}")
+
+        elif 'tell me a joke' in query:
+            speak(pyjokes.get_joke())
+            print(pyjokes.get_joke())
+
+        elif 'open vs code' in query:
+            codepath="C:\\Users\\HP-PC\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            os.startfile(codepath)
+
+
+        elif "send message" in query:
+            pywhatkit.sendwhatmsg("+919616214441", "Hi.....",13,19)
+
+        elif "no" in query:
+            speak("Thanks for using me sir, have a good day..")
+            print("Thanks for using me sir, have a good day..")
+            sys.exit()
+        
+        
+        speak("sir, do you have any other work")
+        print("sir, do you have any other work")
+  
+
+        
+
